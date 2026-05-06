@@ -226,7 +226,7 @@ function Landingpage() {
               </p>
 
               <h2 className="text-4xl md:text-5xl font-bold text-[#0B1F3A] mt-4">
-                Trusted Compliance Experts Since 20+ Years
+                Trusted Compliance Experts Since 25+ Years
               </h2>
 
               <p className="mt-6 text-slate-600 text-lg leading-relaxed">
@@ -304,7 +304,7 @@ function Landingpage() {
         </motion.section>
 
         {/* FACILITIES */}
-        {/* FACILITIES - PREMIUM PROFESSIONAL */}
+
         <motion.section
           variants={fadeUp}
           initial="hidden"
