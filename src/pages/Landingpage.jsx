@@ -3,6 +3,60 @@ import Head from "../components/Head";
 import heroVid from "../assets/heroVid.mp4";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 60 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const Counter = ({ end, suffix = "" }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    let start = 0;
+    const duration = 2000;
+    const increment = end / (duration / 30);
+
+    const timer = setInterval(() => {
+      start += increment;
+
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(start));
+      }
+    }, 30);
+
+    return () => clearInterval(timer);
+  }, [isInView, end]);
+
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
+};
 
 function Landingpage() {
   const clients = [
@@ -27,7 +81,7 @@ function Landingpage() {
       name: "Wetzlar Resorts",
     },
     {
-      img: "https://imgs.search.brave.com/2pFu17WfMAOIgYqmuDSQYkTQR2KOYI_gxXDwtv8IFQM/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi85LzkwL0x1/bHVfTG9nby5wbmcv/MjUwcHgtTHVsdV9M/b2dvLnBuZw",
+      img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Lulu_Logo.png/250px-Lulu_Logo.png",
       name: "Lulu Group",
     },
   ];
@@ -37,13 +91,6 @@ function Landingpage() {
     "Best Office Infrastructure",
     "Secured Record Room",
     "Conference Facility",
-  ];
-
-  const orbitItems = [
-    { title: "ESI / PF", angle: 315 },
-    { title: "GST", angle: 45 },
-    { title: "Payroll", angle: 135 },
-    { title: "Labour Law", angle: 225 },
   ];
 
   const services = [
@@ -91,7 +138,7 @@ function Landingpage() {
               </motion.p>
 
               <motion.h1
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className="text-white text-4xl md:text-7xl font-bold mt-4 leading-tight"
@@ -110,7 +157,12 @@ function Landingpage() {
                 Your Business.
               </motion.p>
 
-              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+              >
                 <Link
                   to="/contact"
                   className="px-7 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full"
@@ -124,32 +176,49 @@ function Landingpage() {
                 >
                   Learn More
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
         {/* STATS */}
-        <section className="py-16 px-6 bg-slate-50">
+        <motion.section
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-16 px-6 bg-slate-50"
+        >
           <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
             {[
-              ["25+", "Years of Excellence"],
-              ["500+", "Satisfied Clients"],
-              ["100%", "Commitment & Trust"],
+              { value: 25, suffix: "+", label: "Years of Excellence" },
+              { value: 500, suffix: "+", label: "Satisfied Clients" },
+              { value: 100, suffix: "%", label: "Commitment & Trust" },
             ].map((item, i) => (
-              <div
+              <motion.div
                 key={i}
+                variants={fadeUp}
+                whileHover={{ y: -10, scale: 1.03 }}
                 className="bg-white rounded-2xl p-8 shadow-xl text-center"
               >
-                <h3 className="text-4xl font-bold text-[#0B1F3A]">{item[0]}</h3>
-                <p className="text-slate-500 mt-2">{item[1]}</p>
-              </div>
+                <h3 className="text-4xl font-bold text-[#0B1F3A]">
+                  <Counter end={item.value} suffix={item.suffix} />
+                </h3>
+
+                <p className="text-slate-500 mt-2">{item.label}</p>
+              </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* ABOUT */}
-        <section className="py-24 px-6">
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-24 px-6"
+        >
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-14 items-center">
             <div>
               <p className="uppercase tracking-[4px] text-blue-600 text-sm font-semibold">
@@ -172,7 +241,10 @@ function Landingpage() {
               </p>
             </div>
 
-            <div className="bg-[#0B1F3A] rounded-3xl p-10 text-white">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-[#0B1F3A] rounded-3xl p-10 text-white"
+            >
               <h3 className="text-2xl font-bold mb-6">Industries We Serve</h3>
 
               <div className="grid grid-cols-2 gap-4 text-blue-100">
@@ -183,12 +255,18 @@ function Landingpage() {
                 <p>Showrooms</p>
                 <p>C & F Agencies</p>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* SECURITY & PRIVACY */}
-        <section className="py-24 bg-[#0B1F3A] px-6">
+        {/* SECURITY */}
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-24 bg-[#0B1F3A] px-6"
+        >
           <div className="max-w-7xl mx-auto text-center">
             <p className="uppercase tracking-[4px] text-blue-300 text-sm font-semibold">
               Security & Privacy
@@ -204,85 +282,221 @@ function Landingpage() {
               the highest level of privacy and security.
             </p>
 
-            <div className="grid md:grid-cols-4 gap-6 mt-14">
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid md:grid-cols-4 gap-6 mt-14"
+            >
               {security.map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-white/10 backdrop-blur rounded-2xl p-6 text-white shadow-md"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FACILITIES */}
-        <section className="py-24 px-6">
-          <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-[#0B1F3A]">
-              State of Art Facilities at Your Service
-            </h2>
-
-            <div className="grid md:grid-cols-4 gap-6 mt-16">
-              {facilities.map((item, i) => (
                 <motion.div
                   key={i}
+                  variants={fadeUp}
                   whileHover={{ y: -8 }}
-                  className="bg-white rounded-2xl p-8 shadow-md font-semibold text-slate-700"
+                  className="bg-white/10 backdrop-blur rounded-2xl p-6 text-white"
                 >
                   {item}
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* SERVICES */}
-        <section className="py-24 bg-white px-6">
+        {/* FACILITIES */}
+        {/* FACILITIES - PREMIUM PROFESSIONAL */}
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-28 px-6 bg-gradient-to-b from-slate-50 to-white"
+        >
           <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-[#0B1F3A]">Our Services</h2>
+            <p className="uppercase tracking-[4px] text-blue-600 text-sm font-semibold">
+              Infrastructure Excellence
+            </p>
 
-            <div className="grid md:grid-cols-3 gap-6 mt-16">
-              {services.map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-slate-50 rounded-2xl p-8 shadow-md font-semibold text-slate-700"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CLIENTS */}
-        <section className="py-24 px-6">
-          <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-[#0B1F3A]">
-              Our Prestigious Clientele
+            <h2 className="text-4xl md:text-5xl font-bold text-[#0B1F3A] mt-4">
+              State of the Art Facilities at Your Service
             </h2>
 
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 mt-16">
-              {clients.map((client, i) => (
-                <div
+            <p className="text-slate-500 mt-5 max-w-3xl mx-auto text-lg">
+              A modern professional environment built for accuracy,
+              confidentiality, collaboration, and efficient client service.
+            </p>
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16"
+            >
+              {facilities.map((item, i) => (
+                <motion.div
                   key={i}
-                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition"
+                  variants={fadeUp}
+                  whileHover={{ y: -10, scale: 1.03 }}
+                  className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-slate-100 transition-all duration-300 overflow-hidden"
                 >
-                  <img
-                    src={client.img}
-                    alt={client.name}
-                    className="h-16 mx-auto object-contain grayscale hover:grayscale-0 transition"
-                  />
-                  <p className="mt-4 text-sm text-slate-600">{client.name}</p>
-                </div>
+                  {/* top glow bar */}
+                  <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-blue-600 to-cyan-400 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+
+                  {/* big number */}
+                  <div className="absolute top-5 right-6 text-5xl font-bold text-slate-100">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+
+                  {/* icon circle */}
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold mb-6">
+                    ✦
+                  </div>
+
+                  {/* title */}
+                  <h3 className="text-xl font-bold text-[#0B1F3A] relative z-10">
+                    {item}
+                  </h3>
+
+                  {/* desc */}
+                  <p className="text-slate-500 mt-3 leading-relaxed">
+                    Designed to deliver professional efficiency, comfort,
+                    privacy, and dependable client support.
+                  </p>
+                </motion.div>
               ))}
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* SERVICES */}
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-28 bg-gradient-to-b from-white to-slate-50 px-6"
+        >
+          <div className="max-w-7xl mx-auto text-center">
+            <p className="uppercase tracking-[4px] text-blue-600 text-sm font-semibold">
+              What We Offer
+            </p>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-[#0B1F3A] mt-4">
+              Professional Services Tailored For Growth
+            </h2>
+
+            <p className="text-slate-500 mt-5 max-w-3xl mx-auto text-lg">
+              Reliable financial, tax, compliance, and advisory solutions
+              designed to support modern businesses with confidence.
+            </p>
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16"
+            >
+              {services.map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl border border-slate-100 transition-all duration-300 overflow-hidden"
+                >
+                  {/* top accent */}
+                  <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-blue-600 to-cyan-400 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+
+                  {/* number */}
+                  <div className="text-5xl font-bold text-slate-100 absolute right-6 top-4">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+
+                  {/* icon circle */}
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 text-xl font-bold mb-6">
+                    ✓
+                  </div>
+
+                  {/* title */}
+                  <h3 className="text-xl font-bold text-[#0B1F3A] relative z-10">
+                    {item}
+                  </h3>
+
+                  {/* desc */}
+                  <p className="text-slate-500 mt-3 leading-relaxed">
+                    Trusted professional support delivered with accuracy,
+                    compliance, and business-focused strategy.
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* CLIENTS */}
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-24 px-6 bg-white overflow-hidden"
+        >
+          <div className="max-w-7xl mx-auto text-center">
+            <p className="uppercase tracking-[4px] text-blue-600 text-sm font-semibold">
+              Trusted Brands
+            </p>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-[#0B1F3A] mt-4">
+              Partners Who Trust Us
+            </h2>
+
+            <p className="text-slate-500 mt-4 max-w-2xl mx-auto">
+              Proudly serving respected organizations across multiple
+              industries.
+            </p>
+
+            <div className="relative mt-16">
+              <motion.div
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{
+                  duration: 22,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                className="flex gap-6 w-max"
+              >
+                {[...clients, ...clients].map((client, i) => (
+                  <motion.div
+                    key={i}
+                    whileHover={{ y: -8, scale: 1.04 }}
+                    className="min-w-[260px] bg-slate-50 rounded-3xl p-8 shadow-md hover:shadow-xl transition"
+                  >
+                    <motion.img
+                      whileHover={{ scale: 1.08 }}
+                      src={client.img}
+                      alt={client.name}
+                      className="h-16 mx-auto object-contain grayscale hover:grayscale-0 transition duration-300"
+                    />
+
+                    <p className="mt-5 text-sm font-medium text-slate-600">
+                      {client.name}
+                    </p>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* CTA */}
-        <section className="py-24 px-6">
+        <motion.section
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="py-24 px-6"
+        >
           <div className="max-w-7xl mx-auto bg-[#0B1F3A] rounded-3xl p-10 md:p-16 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-white">
               Experienced, To Ensure Your Ascend!
@@ -300,7 +514,7 @@ function Landingpage() {
               Contact Us
             </Link>
           </div>
-        </section>
+        </motion.section>
       </div>
 
       <Foot />

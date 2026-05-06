@@ -31,7 +31,7 @@ function Head() {
           <img
             src={logo}
             alt="logo"
-            className="h-12 w-auto object-contain  px-2 py-1 "
+            className="h-15 w-auto object-contain  px-2 py-1 "
             // bg-white rounded-xl shadow-md
           />
           Ticks N Lines LLP
