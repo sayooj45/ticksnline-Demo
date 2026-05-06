@@ -1,6 +1,7 @@
 import Head from "../components/Head";
 import Foot from "../components/Foot";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 function Contact() {
   const [form, setForm] = useState({
@@ -11,63 +12,109 @@ function Contact() {
     message: "",
   });
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: 60 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
+  const stagger = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
   return (
     <>
       <Head />
 
-      <section className="bg-slate-100 pt-28 pb-24">
-
+      <section className="bg-slate-100 pt-28 pb-24 overflow-hidden">
         {/* HERO */}
-        <div className="text-center px-6 mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0B1F3A]">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center px-6 mb-16"
+        >
+          <p className="uppercase tracking-[5px] text-blue-600 text-sm font-semibold">
+            Contact Us
+          </p>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-[#0B1F3A] mt-4">
             Get in Touch
           </h1>
-          <p className="mt-4 text-slate-500 max-w-xl mx-auto text-lg">
-            Whether you need consultation, compliance support, or business advice,
-            our team is here to help.
+
+          <p className="mt-5 text-slate-500 max-w-2xl mx-auto text-lg">
+            Whether you need consultation, compliance support, or business
+            advice, our team is here to help.
           </p>
-        </div>
+        </motion.div>
 
         {/* MAIN GRID */}
-        <div className="max-w-full-xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-start">
-
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-start"
+        >
           {/* LEFT SIDE */}
-          <div className="space-y-6">
-
+          <motion.div variants={fadeUp} className="space-y-6">
             {/* MAP */}
-            <div className="bg-white rounded-2xl shadow-md p-4">
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-3xl shadow-xl p-4 overflow-hidden"
+            >
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15712.850978044953!2d76.310781!3d10.081647!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080e6725350343%3A0xa4fd0bcc1bc58323!2sTicks%20n%20Lines!5e0!3m2!1sen!2sus!4v1775402387157!5m2!1sen!2sus"
-                className="w-full h-[260px] rounded-xl"
+                className="w-full h-[280px] rounded-2xl"
                 loading="lazy"
               ></iframe>
-            </div>
+            </motion.div>
 
             {/* INFO CARDS */}
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-5">
+              <motion.div
+                whileHover={{ y: -6 }}
+                className="bg-white p-6 rounded-2xl shadow-md"
+              >
+                <p className="text-sm text-slate-500 mb-2">Email</p>
 
-              <div className="bg-white p-5 rounded-xl shadow-sm">
-                <p className="text-sm text-slate-500">Email</p>
-                <p className="text-[#0B1F3A] font-medium">
+                <p className="text-[#0B1F3A] font-semibold">
                   esipf@ticksnlines.com
                 </p>
-                <p className="text-[#0B1F3A] font-medium">
+
+                <p className="text-[#0B1F3A] font-semibold mt-1">
                   salestax@ticksnlines.com
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="bg-white p-5 rounded-xl shadow-sm">
-                <p className="text-sm text-slate-500">Working Hours</p>
-                <p className="text-[#0B1F3A] font-medium">
+              <motion.div
+                whileHover={{ y: -6 }}
+                className="bg-white p-6 rounded-2xl shadow-md"
+              >
+                <p className="text-sm text-slate-500 mb-2">Working Hours</p>
+
+                <p className="text-[#0B1F3A] font-semibold">
                   Mon – Sat: 8:00 AM – 5:00 PM
                 </p>
-              </div>
-
+              </motion.div>
             </div>
 
-            <div className="bg-white p-5 rounded-xl shadow-sm">
-              <p className="text-sm text-slate-500 mb-2">Contact Numbers</p>
-              <div className="grid grid-cols-2 gap-2 text-[#0B1F3A] text-sm">
+            {/* CONTACT NUMBERS */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="bg-white p-6 rounded-2xl shadow-md"
+            >
+              <p className="text-sm text-slate-500 mb-3">Contact Numbers</p>
+
+              <div className="grid grid-cols-2 gap-3 text-[#0B1F3A] font-medium text-sm">
                 <p>0484 2543885</p>
                 <p>09562707090</p>
                 <p>09562707091</p>
@@ -75,64 +122,67 @@ function Contact() {
                 <p>09562707093</p>
                 <p>09562707094</p>
               </div>
-            </div>
-
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* RIGHT SIDE FORM */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
-
-            <h2 className="text-2xl font-semibold text-[#0B1F3A] mb-6">
+          <motion.div
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+            className="bg-white rounded-3xl shadow-2xl p-8 md:p-10"
+          >
+            <h2 className="text-3xl font-bold text-[#0B1F3A] mb-2">
               Send us a message
             </h2>
 
-            <form className="space-y-5">
+            <p className="text-slate-500 mb-8">
+              Fill the form below and our team will get back to you shortly.
+            </p>
 
+            <form className="space-y-5">
               <div className="grid sm:grid-cols-2 gap-4">
                 <input
                   type="text"
                   placeholder="First Name"
-                  className="w-full border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 />
 
                 <input
                   type="text"
                   placeholder="Last Name"
-                  className="w-full border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               <input
                 type="email"
                 placeholder="Email Address"
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
               />
 
               <input
                 type="text"
                 placeholder="Phone Number"
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
               />
 
               <textarea
                 rows="5"
                 placeholder="Your Message"
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
               ></textarea>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+                className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition font-semibold"
               >
                 Send Message
-              </button>
-
+              </motion.button>
             </form>
-
-          </div>
-
-        </div>
-
+          </motion.div>
+        </motion.div>
       </section>
 
       <Foot />
